@@ -1,0 +1,29 @@
+<div #mapa class="mapa-container">
+
+</div>
+
+<div class="row">
+
+  <div class="col-12">
+    <label class="form-label" for="customRange1">
+      Zoom {{zoomLevel | number:'1.0-2'}}
+      - lt, lng: [123,456]
+    </label>
+    <input type="range" class="form-range"
+           [value]="zoomLevel"
+           min="0"
+           max="18"
+           [(ngModel)]="zoomLevel"
+           (input)="zoomCambio()">
+  </div>
+
+  <div class="col-12">
+    <button class="btn btn-primary" (click)="zoomOut()">
+      -
+    </button>
+
+    <button class="btn btn-primary float-end" (click)="zoomIn()">
+      +
+    </button>
+  </div>
+</div>
