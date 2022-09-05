@@ -7,7 +7,7 @@
   <div class="col-12">
     <label class="form-label" for="customRange1">
       Zoom {{zoomLevel | number:'1.0-2'}}
-      - lt, lng: [123,456]
+      - lt, lng: {{longitud | number:'1.4-4'}} ltd: {{latitud | number:'1.4-4'}}
     </label>
     <input type="range" class="form-range"
            [value]="zoomLevel"
