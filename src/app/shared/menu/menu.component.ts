@@ -28,7 +28,7 @@ export class MenuComponent implements OnInit {
     {ruta: '/mapas/fullscreen', nombre: 'Pantalla completa'},
     {ruta: '/mapas/zoom-range', nombre: 'Zoom'},
     {ruta: '/mapas/marcadores', nombre: 'Marcadores'},
-    {ruta: '/mapas/propiedades', nombre: 'Propiedades'},
+    // {ruta: '/mapas/propiedades', nombre: 'Propiedades'},
   ]
 
   constructor() { }

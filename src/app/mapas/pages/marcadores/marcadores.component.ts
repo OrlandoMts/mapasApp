@@ -3,7 +3,9 @@ import * as mapboxgl from 'mapbox-gl';
 
 interface MarcadorPersonalizado {
   color: string,
-  marker: mapboxgl.Marker
+  marker?: mapboxgl.Marker,
+  lng?: number,
+  lat?: number,
 };
 
 @Component({
@@ -68,6 +70,9 @@ export class MarcadoresComponent implements AfterViewInit {
       this.latitud = lat
     });
 
+    //Recupera la data que este en el localStorage
+    this.leerelLS();
+
     // this.mapa.on('click', () => {
     //   const marker = new mapboxgl.Marker()
     //     .setLngLat([this.longitud, this.latitud])
@@ -85,10 +90,16 @@ export class MarcadoresComponent implements AfterViewInit {
     })
         .setLngLat([this.longitud, this.latitud])
         .addTo(this.mapa);
-
+    // Lo uso para poder recorrer la data en el html
     this.markers.push({
       color,
       marker
+    });
+
+    this.guardarenLS();
+
+    marker.on('dragend', () => { // En automatico actualizará las coordenadas del marcador movido
+      this.guardarenLS();
     });
     
   }
@@ -100,6 +111,53 @@ export class MarcadoresComponent implements AfterViewInit {
       center: [lng, lat],
       essential: true
     })
+  }
+
+  borrarMarcador(index: number){
+    this.markers[index].marker?.remove();
+    this.markers.splice(index,1);
+    this.guardarenLS(); // Lo actualiza y detecta que ya no existe el elemento borrado
+  }
+
+  guardarenLS(){
+    // Con esto evito guardar todo el objeto Maker en el LS y solo lo que necesito
+    // lngLatArr es creado apartir de la data retornada
+    const lngLatArr: MarcadorPersonalizado[] = this.markers.map( ({color, marker}) => {
+      const {lat, lng} = marker!.getLngLat();
+      
+      return {color, lat, lng};
+    });
+    localStorage.setItem('marcadores', JSON.stringify(lngLatArr));
+    
+  }
+
+  leerelLS(){
+    if (!localStorage.getItem('marcadores')){
+      return
+    }
+
+    // const lngLatArr: MarcadorPersonalizado[] = localStorage.getItem('marcadores');
+    
+    const lngLatArr: MarcadorPersonalizado[] = JSON.parse(localStorage.getItem('marcadores')!);
+    console.log(lngLatArr);
+    lngLatArr.forEach(m => {
+      
+      const newMarker = new mapboxgl.Marker({
+        draggable: true,
+        color: m.color
+      })
+        .setLngLat([m.lng!, m.lat!])
+        .addTo(this.mapa);
+      // Es para actualizar el arreglo de marker y no perder info
+      this.markers.push({
+        marker: newMarker,
+        color: m.color
+      });
+
+      newMarker.on('dragend', () => { // En automatico actualizará las coordenadas del marcador movido
+        this.guardarenLS();
+      });
+    });
   }
 
 }
